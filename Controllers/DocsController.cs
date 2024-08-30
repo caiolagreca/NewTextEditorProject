@@ -14,10 +14,12 @@ namespace NewTextEditorProject.Controllers
     public class DocsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<DocsController> _logger;
 
-        public DocsController(ApplicationDbContext context)
+        public DocsController(ApplicationDbContext context, ILogger<DocsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: Docs
@@ -44,8 +46,21 @@ namespace NewTextEditorProject.Controllers
             {
                 _context.Add(doc);
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("Documento criado: {@Doc}", doc);
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        _logger.LogError("Erro no campo {Field}: {ErrorMessage}", state.Key, error.ErrorMessage);
+                    }
+                }
+                return View(doc);
+            }
+
             return View(doc);
         }
 
