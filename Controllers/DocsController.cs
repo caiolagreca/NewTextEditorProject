@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NewTextEditorProject.Data;
 using NewTextEditorProject.Models;
 
@@ -31,6 +33,7 @@ namespace NewTextEditorProject.Controllers
         }
 
         // GET: Docs/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -40,8 +43,14 @@ namespace NewTextEditorProject.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Title,Context,UserId")] Doc doc)
         {
+            if (doc.UserId.IsNullOrEmpty())
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(doc);
@@ -60,7 +69,6 @@ namespace NewTextEditorProject.Controllers
                 }
                 return View(doc);
             }
-
             return View(doc);
         }
 

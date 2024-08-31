@@ -24,10 +24,12 @@
                 <span asp-validation-for="Context" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="hidden" asp-for="UserId" class="form-control" asp-items="ViewBag.UserId" />
+                <input type="hidden" asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-danger ml-2" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
             </div>
         </form>
     </div>
